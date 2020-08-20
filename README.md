@@ -1,45 +1,18 @@
 # Secret Network Contracts Introduction
 
-This repository can be used to get up and running on a local Secret Network developer testnet (secretdev) to start working with the cosmwasm-based smart contracts (soon to be secret contracts!).
+This repository can be used to get up and running on Secret Network testnet (enigma-pub-testnet-2) to start working with secret contracts.
 
 A few important notes:
 - smart contracts in this repo are a precursor to Enigma's Secret Contracts, which enable data privacy
 - smart contracts are written in Rust and based on cosmwasm, and the module is referred to as `compute` in the Secret Network!
 - these cosmwasm-based smart contracts should be reusable and easily modified once we incorporate data privacy
 
-## Setup the Local Developer Testnet
-
-The developer blockchain is configured to run inside a docker container. Install [Docker](https://docs.docker.com/install/) for your environment (Mac, Windows, Linux).
-
-Open a terminal window and change to your project directory.
-Then start SecretNetwork, labelled _secretdev_ from here on:
-
-```
-$ docker run -it --rm \
- -p 26657:26657 -p 26656:26656 -p 1317:1317 \
- --name secretdev enigmampc/secret-network-bootstrap-sw:latest
-```
-
-**NOTE**: The _secretdev_ docker container can be stopped by CTRL+C
-
-![](docker-run.png)
-
-At this point you're running a local SecretNetwork full-node. Let's connect to the container so we can view and manage the secret keys:
-
-**NOTE**: In a new terminal
-```
-docker exec -it secretdev /bin/bash
-```
-
-The local blockchain has a couple of keys setup for you (similar to accounts if you're familiar with Truffle Ganache). The keys are stored in the `test` keyring backend, which makes it easier for local development and testing.
-
-```
-secretcli keys list --keyring-backend test
-````
-
-![](secretcli-keys-list.png)
-
-`exit` when you are done
+## Setup the Secret Network light client
+- [Install the secretcli](https://github.com/enigmampc/SecretNetwork/blob/master/docs/testnet/install_cli.md)
+- configure secretcli to use the testnet
+  ```
+  secretcli config node tcp://bootstrap.pub.testnet.enigma.co:26657
+  ```
 
 ## Setup Secret Contracts (cosmwasm)
 
@@ -47,7 +20,7 @@ Secret Contracts are based on [Cosmwasm](https://www.cosmwasm.com) which is an i
 
 The SecretNetwork has a _compute_ module that we'll use to store, query and instantiate the smart contract. Once stored on the blockchain the smart contract has to be created (or instantiated) in order to execute its methods. This is similar to doing an Ethereum `migrate` using truffle which handles the deployment and creation of a smart contract.
 
-Eventually the smart contracts will become secret contracts (in a future blockchain upgrade) running in an SGX enclave (Trusted Execution Environment) where computations are performed on the encrypted contract data (i.e. inputs, state). 
+Eventually the smart contracts will become secret contracts (in a future blockchain upgrade) running in an SGX enclave (Trusted Execution Environment) where computations are performed on the encrypted contract data (i.e. inputs, state).
 
 Next we'll walkthrough steps to:
 - install Rust (you can check out the Rust book, rustlings course, examples and more at https://www.rust-lang.org/learn)
@@ -176,23 +149,18 @@ The optimization creates two files:
 
 ### Store the Smart Contract on our local Testnet
 
-```
-# First lets start it up again, this time mounting our project's code inside the container.
-docker run -it --rm \
- -p 26657:26657 -p 26656:26656 -p 1317:1317 \
- -v $(pwd):/root/code \
- --name secretdev enigmampc/secret-network-bootstrap-sw:latest
- ```
-
-Upload the optimized contract.wasm to _secretdev_ :
+Upload the optimized contract.wasm to _enigma-pub-testnet-2_ :
 
 ```
-docker exec -it secretdev /bin/bash
-
-cd code
-
-secretcli tx compute store contract.wasm --from a --gas auto -y --keyring-backend test
+secretcli tx compute store contract.wasm --from <your account alias> --gas 500000 --gas-prices=1.0uscrt
 ```
+
+The result is a txhash, query it you can see the code_id in the logs, in this case it's 93 as shown below. We'll need the code_id to create an instance of the contract.
+```
+secretcli q tx 9A07B4A7FDD23BF654A6A8C1CE44EF410252AA3707590D347D4761D70B8C4B44
+```
+
+![](store_contract.png)
 
 ### Querying the Smart Contract and Code
 
@@ -201,9 +169,16 @@ List current smart contract code
 secretcli query compute list-code
 [
   {
-    "id": 1,
-    "creator": "enigma1klqgym9m7pcvhvgsl8mf0elshyw0qhruy4aqxx",
-    "data_hash": "0C667E20BA2891536AF97802E4698BD536D9C7AB36702379C43D360AD3E40A14",
+    "id": 92,
+    "creator": "secret16xum37xp3pt6jxwy8hyhylhnfju7z6wwwn4jpz",
+    "data_hash": "799601F9CF41C9E89A23762AF19A884A82073955AEF75A54A0DBD53EAE1C8229",
+    "source": "",
+    "builder": ""
+  },
+  {
+    "id": 93,
+    "creator": "secret1ddhvtztgr9kmtg2sr5gjmz60rhnqv8vwm5wjuh",
+    "data_hash": "61039E55062807E982BFAEC1921A438716155162F10356E0C34E564078E7E3A3",
     "source": "",
     "builder": ""
   }
@@ -212,41 +187,32 @@ secretcli query compute list-code
 
 ### Instantiate the Smart Contract
 
-At this point the contract's been uploaded and stored on the testnet, but there's no "instance."
-This is like `discovery migrate` which handles both the deploying and creation of the contract instance, except in Cosmos the deploy-execute process consists of 3 steps rather than 2 in Ethereum. You can read more about the logic behind this decision, and other comparisons to Solidity, in the [cosmwasm documentation](https://www.cosmwasm.com/docs/getting-started/smart-contracts). These steps are:
-1. Upload Code - Upload some optimized wasm code, no state nor contract address (example Standard ERC20 contract)
-2. Instantiate Contract - Instantiate a code reference with some initial state, creates new address (example set token name, max issuance, etc for my ERC20 token)
-3. Execute Contract - This may support many different calls, but they are all unprivileged usage of a previously instantiated contract, depends on the contract design (example: Send ERC20 token, grant approval to other contract)
-
 To create an instance of this project we must also provide some JSON input data, a starting count.
 
 ```bash
 INIT="{\"count\": 100000000}"
-CODE_ID=1
-secretcli tx compute instantiate $CODE_ID "$INIT" --from a --label "my counter" -y --keyring-backend test
+CODE_ID=93
+secretcli tx compute instantiate $CODE_ID "$INIT" --from <your account alias> --label "my counter" -y
 ```
 
 With the contract now initialized, we can find its address
 ```bash
-secretcli query compute list-contract-by-code 1
+secretcli query compute list-contract-by-code $CODE_ID
 ```
-Our instance is secret18vd8fpwxzck93qlwghaj6arh4p7c5n8978vsyg
+Our instance is secret1tss72nzwqzverru7fy5s49czqepmvdgwdz3gcx
 
 We can query the contract state
 ```bash
-CONTRACT=secret18vd8fpwxzck93qlwghaj6arh4p7c5n8978vsyg
+CONTRACT=secret1tss72nzwqzverru7fy5s49czqepmvdgwdz3gcx
 
-# NB On public testnet
 secretcli query compute query $CONTRACT "{\"get_count\": {}}"
-
-# Add if using the Docker version
-secretcli query compute contract-state smart $CONTRACT "{\"get_count\": {}}"
 ```
 
 And we can increment our counter
 ```bash
-secretcli tx compute execute $CONTRACT "{\"increment\": {}}" --from a --keyring-backend test
+secretcli tx compute execute $CONTRACT "{\"increment\": {}}" --from <your account alias>
 ```
+![](contract_interactions.png)
 
 ## Smart Contract
 
