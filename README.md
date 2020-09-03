@@ -9,9 +9,11 @@ A few important notes:
 
 ## Setup the Secret Network light client
 - [Install the secretcli](https://github.com/enigmampc/SecretNetwork/blob/master/docs/testnet/install_cli.md)
+- NB Use v0.8.0 for the testnet (https://github.com/enigmampc/SecretNetwork/releases/tag/v0.8.0)
 - configure secretcli to use the testnet
   ```
-  secretcli config node tcp://bootstrap.pub.testnet.enigma.co:26657
+  secretcli config node tcp://bootstrap.pub.testnet2.enigma.co:26657
+  secretcli config chain-id enigma-pub-testnet-3
   ```
 
 ## Setup Secret Contracts (cosmwasm)
@@ -98,66 +100,23 @@ Cargo.toml	Importing.md	NOTICE		README.md	rustfmt.toml	src
 
 Use the following command to compile the smart contract which produces the wasm contract file.
 
-```
-cargo wasm
-```
-
-## Unit Tests (NB Tests in this template currently fail unless you have SGX enabled)
-
-Run unit tests
+NB The Makefile uses wasm-opt, a WebAssembly optimizer. You can install with npm for eg `npm i -g wasm-opt`
 
 ```
-RUST_BACKTRACE=1 cargo unit-test
+make
 ```
-
-## Integration Tests
-
-The integration tests are under the `tests/` directory and run as:
-
-```
-cargo integration-test
-```
-
-## Generate Msg Schemas
-
-We can also generate JSON Schemas that serve as a guide for anyone trying to use the contract, to specify which arguments they need.
-
-Auto-generate msg schemas (when changed):
-
-```
-cargo schema
-```
-
-
-## Deploy Smart Contract
-
-Before deploying or storing the contract on the testnet, need to run the cosmwasm optimizer.
-
-### Optimize compiled wasm
-
-```
-docker run --rm -v "$(pwd)":/code \
-  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
-  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
-  cosmwasm/rust-optimizer:0.8.0  
-```
-The contract wasm needs to be optimized to get a smaller footprint. Cosmwasm notes state the contract would be too large for the blockchain unless optimized. This example contract.wasm is 1.8M before optimizing, 90K after.
-
-The optimization creates two files:
-- contract.wasm
-- hash.txt
 
 ### Store the Smart Contract on our local Testnet
 
-Upload the optimized contract.wasm to _enigma-pub-testnet-2_ :
+Upload the optimized contract.wasm to _enigma-pub-testnet-3_ :
 
 ```
-secretcli tx compute store contract.wasm --from <your account alias> --gas 500000 --gas-prices=1.0uscrt
+secretcli tx compute store contract.wasm.gz --from <your account alias> -y --gas 1000000 --gas-prices=1.0uscrt
 ```
 
-The result is a txhash, query it you can see the code_id in the logs, in this case it's 93 as shown below. We'll need the code_id to create an instance of the contract.
+The result is a txhash, query it you can see the code_id in the logs, in this case it's 45 as shown below. We'll need the code_id to create an instance of the contract.
 ```
-secretcli q tx 9A07B4A7FDD23BF654A6A8C1CE44EF410252AA3707590D347D4761D70B8C4B44
+secretcli q tx 86FCA39283F0BD80A1BE42288506C47041BE2FEE5F6DB13F4652CD5594B5D875
 ```
 
 ![](store_contract.png)
@@ -169,16 +128,9 @@ List current smart contract code
 secretcli query compute list-code
 [
   {
-    "id": 92,
-    "creator": "secret16xum37xp3pt6jxwy8hyhylhnfju7z6wwwn4jpz",
-    "data_hash": "799601F9CF41C9E89A23762AF19A884A82073955AEF75A54A0DBD53EAE1C8229",
-    "source": "",
-    "builder": ""
-  },
-  {
-    "id": 93,
+    "id": 45,
     "creator": "secret1ddhvtztgr9kmtg2sr5gjmz60rhnqv8vwm5wjuh",
-    "data_hash": "61039E55062807E982BFAEC1921A438716155162F10356E0C34E564078E7E3A3",
+    "data_hash": "E15E697E5EB2144C1BF697F1127EDF1C4322004DA7F032209D2D445BCAE46FE0",
     "source": "",
     "builder": ""
   }
@@ -187,11 +139,11 @@ secretcli query compute list-code
 
 ### Instantiate the Smart Contract
 
-To create an instance of this project we must also provide some JSON input data, a starting count.
+To create an instance of this project we must also provide some JSON input data, a starting count, you should change the label to be something unique, which can then be referenced by label instead of contract address for convenience.
 
 ```bash
 INIT="{\"count\": 100000000}"
-CODE_ID=93
+CODE_ID=45
 secretcli tx compute instantiate $CODE_ID "$INIT" --from <your account alias> --label "my counter" -y
 ```
 
@@ -199,11 +151,11 @@ With the contract now initialized, we can find its address
 ```bash
 secretcli query compute list-contract-by-code $CODE_ID
 ```
-Our instance is secret1tss72nzwqzverru7fy5s49czqepmvdgwdz3gcx
+Our instance is secret1htxt8p8lu0v53ydsdguk9pc0x9gg060k7x4qxr
 
 We can query the contract state
 ```bash
-CONTRACT=secret1tss72nzwqzverru7fy5s49czqepmvdgwdz3gcx
+CONTRACT=secret1htxt8p8lu0v53ydsdguk9pc0x9gg060k7x4qxr
 
 secretcli query compute query $CONTRACT "{\"get_count\": {}}"
 ```
