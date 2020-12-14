@@ -395,6 +395,11 @@ mod tests {
 ## Secret Toolkit
 [Secret Toolkit](https://github.com/enigmampc/secret-toolkit) is a collection of Rust packages that contain common tools used in development of Secret Contracts running on the Secret Network.
 
+#### Calling other Contracts
+[Secret Toolkit](https://github.com/enigmampc/secret-toolkit) contains very helpful tools that can be used to call other contracts from your own.  [Here](https://github.com/baedrik/SCRT-sealed-bid-auction/blob/master/CALLING_OTHER_CONTRACTS.md) is a guide on how to call other contracts from your own using the `InitCallback`, `HandleCallback`, and `Query` traits defined in the [utils package](https://github.com/enigmampc/secret-toolkit/tree/master/packages/utils).
+
+If you are specifically wanting to call Handle functions or Queries of [SNIP-20 token contracts](https://github.com/enigmampc/snip20-reference-impl), there are individually named functions you can use to make it even simpler than using the generic traits.  These are located in the [SNIP-20 package](https://github.com/enigmampc/secret-toolkit/tree/master/packages/snip20).
+
 ## Secret Contracts - Advanced
 Use [this link](https://github.com/baedrik/SCRT-sealed-bid-auction) for a sealed-bid (secret) auction contract that makes use of [SNIP-20](https://github.com/enigmampc/snip20-reference-impl) and a walkthrough of the contract
 
