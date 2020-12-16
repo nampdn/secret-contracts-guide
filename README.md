@@ -212,7 +212,7 @@ This is like `discovery migrate` which handles both the deploying and creation o
 To create an instance of this project we must also provide some JSON input data, a starting count.
 
 ```bash
-INIT="{\"count\": 100000000}"
+INIT='{"count": 100000000}'
 CODE_ID=1
 secretcli tx compute instantiate $CODE_ID "$INIT" --from a --label "my counter" -y --keyring-backend test
 ```
@@ -227,12 +227,12 @@ We can query the contract state
 ```bash
 CONTRACT=secret18vd8fpwxzck93qlwghaj6arh4p7c5n8978vsyg
 
-secretcli query compute query $CONTRACT "{\"get_count\": {}}"
+secretcli query compute query $CONTRACT '{"get_count": {}}'
 ```
 
 And we can increment our counter
 ```bash
-secretcli tx compute execute $CONTRACT "{\"increment\": {}}" --from a --keyring-backend test
+secretcli tx compute execute $CONTRACT '{"increment": {}}' --from a --keyring-backend test
 ```
 
 ### Deploy to the Holodeck Testnet
@@ -296,7 +296,7 @@ secretcli query tx <txhash>
 To create an instance of your contract on Holodeck set the `CODE_ID` value below to the `code_id` you got by querying the txhash.
 
 ```bash
-INIT="{\"count\": 100000000}"
+INIT='{"count": 100000000}'
 CODE_ID=<code_id>
 secretcli tx compute instantiate $CODE_ID "$INIT" --from <your account alias> --label "my counter" -y
 ```
