@@ -11,8 +11,8 @@ The developer blockchain is configured to run inside a docker container. Install
 Open a terminal window and change to your project directory.
 Then start SecretNetwork, labelled _secretdev_ from here on:
 
-```
-$ docker run -it --rm \
+```bash
+docker run -it --rm \
  -p 26657:26657 -p 26656:26656 -p 1337:13337 \
  --name secretdev enigmampc/secret-network-sw-dev:v1.0.4
 ```
@@ -24,13 +24,13 @@ $ docker run -it --rm \
 At this point you're running a local SecretNetwork full-node. Let's connect to the container so we can view and manage the secret keys:
 
 **NOTE**: In a new terminal
-```
+```bash
 docker exec -it secretdev /bin/bash
 ```
 
 The local blockchain has a couple of keys setup for you (similar to accounts if you're familiar with Truffle Ganache). The keys are stored in the `test` keyring backend, which makes it easier for local development and testing.
 
-```
+```bash
 secretcli keys list --keyring-backend test
 ````
 
@@ -52,14 +52,14 @@ The Rust dependencies include the Rust compiler, cargo (_package manager_), tool
 
 More information about installing Rust can be found here: https://www.rust-lang.org/tools/install.
 
-```
+```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 ```
 
 2. Add rustup target wasm32 for both stable and nightly
 
-```
+```bash
 rustup default stable
 rustup target list --installed
 rustup target add wasm32-unknown-unknown
@@ -69,7 +69,7 @@ rustup target add wasm32-unknown-unknown --toolchain nightly
 ```
 
 3. If using linux, install the standard build tools:
-```
+```bash
 apt install build-essential
 ```
 
@@ -77,7 +77,7 @@ apt install build-essential
 
 Cargo generate is the tool you'll use to create a smart contract project (https://doc.rust-lang.org/cargo).
 
-```
+```bash
 cargo install cargo-generate --features vendored-openssl
 ```
 
@@ -93,7 +93,7 @@ To create the smart contract you'll:
 
 ### Generate the smart contract project
 
-```
+```bash
 cargo generate --git https://github.com/enigmampc/secret-template --name mysimplecounter
 ```
 
@@ -101,7 +101,7 @@ The git project above is a cosmwasm smart contract template that implements a si
 
 Change directory to the project you created and view the structure and files that were created.
 
-```
+```bash
 cd mysimplecounter
 ```
 
@@ -116,7 +116,7 @@ Cargo.toml	Importing.md	NOTICE		README.md	rustfmt.toml	src
 
 Use the following command to compile the smart contract which produces the wasm contract file.
 
-```
+```bash
 cargo wasm
 ```
 
@@ -124,7 +124,7 @@ cargo wasm
 
 #### Run unit tests
 
-```
+```bash
 RUST_BACKTRACE=1 cargo unit-test
 ```
 
@@ -132,7 +132,7 @@ RUST_BACKTRACE=1 cargo unit-test
 
 The integration tests are under the `tests/` directory and run as:
 
-```
+```bash
 cargo integration-test
 ```
 
@@ -142,7 +142,7 @@ We can also generate JSON Schemas that serve as a guide for anyone trying to use
 
 Auto-generate msg schemas (when changed):
 
-```
+```bash
 cargo schema
 ```
 
@@ -153,7 +153,7 @@ Before deploying or storing the contract on a testnet, you need to run the [secr
 
 #### Optimize compiled wasm
 
-```
+```bash
 docker run --rm -v "$(pwd)":/contract \
   --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
@@ -167,7 +167,7 @@ This creates a zip of two files:
 
 #### Store the Smart Contract
 
-```
+```bash
 # First lets start it up again, this time mounting our project's code inside the container.
 docker run -it --rm \
  -p 26657:26657 -p 26656:26656 -p 1317:1317 \
@@ -177,7 +177,7 @@ docker run -it --rm \
 
 Upload the optimized contract.wasm.gz:
 
-```
+```bash
 docker exec -it secretdev /bin/bash
 
 cd code
@@ -188,7 +188,7 @@ secretcli tx compute store contract.wasm.gz --from a --gas 1000000 -y --keyring-
 #### Querying the Smart Contract and Code
 
 List current smart contract code
-```
+```bash
 secretcli query compute list-code
 [
   {
@@ -326,7 +326,7 @@ The `state.rs` file defines the State struct, used for storing the contract data
 
 The `msg.rs` file is where the InitMsg parameters are specified (like a constructor), the types of Query (GetCount) and Handle[r] (Increment) messages, and any custom structs for each query response.
 
-```rs
+```rust
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -365,7 +365,7 @@ Use [this link](https://github.com/enigmampc/SecretSimpleVote/blob/master/src/co
 
 Unit tests are coded in the `contract.rs` file itself:
 
-```rs
+```rust
 #[cfg(test)]
 mod tests {
     use super::*;
