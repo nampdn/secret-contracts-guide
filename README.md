@@ -439,7 +439,7 @@ Secret.js is how users interact with Secret Network. Secret.js is mostly based o
 
 
 ### Keplr integration
-[Keplr](https://wallet.keplr.app/#/dashboard) is the web wallet users need to interact with Secret Applications. Please use [this link](https://github.com/enigmampc/SecretJS-Templates/blob/master/ReactJS%2BKeplr.js) for a sample implementation of Keplr and Secret.js
+[Keplr](https://wallet.keplr.app/#/dashboard) is the web wallet users need to interact with Secret Applications. Please use [this link](https://github.com/enigmampc/SecretJS-Templates/tree/master/6_wallets) for sample implementations of Keplr and Secret.js
 
 ## Other resources
 
