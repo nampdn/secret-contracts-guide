@@ -4,6 +4,31 @@ This repository can be used to master Secret Contract development! In this docum
 
 To learn more about secret contracts, please visit our [documentation page](https://build.scrt.network/dev/secret-contracts.html).
 
+<details>
+  <summary>Topics covered on this page</summary>
+
+  - [Setup the Local Developer Testnet](#/setup-the-local-developer-testnet)
+  - [Setup Secret Contracts](#/setup-secret-contracts)
+  - [Create Initial Smart Contract](#/create-initial-smart-contract)
+  - [Deploy Smart Contract to local Testnet](#/deploy-smart-contract-to-our-local-testnet)
+  - [Instantiate the Smart Contract](#/instantiate-the-smart-contract)
+  - Migrating to Testnet
+    * [Deploy to the Holodeck Testnet](#/deploy-to-the-holodeck-testnet)
+    * [Get SCRT from faucet](#/get-some-scrt-from-the-faucet)
+    * [Store the Secret Contract](#/store-the-secret-contract-on-holodeck)
+  - Secret Contracts
+    * [Secret Contracts 101](#/secret-contracts-101)
+    * [Secret Contract code explanation](#/secret-contract-code-explanation)
+    * [Secret Contracts - Advanced](#/secret-contracts---advanced)
+  - [SecretJS](#/secretjs)
+  - [Keplr integration](keplr-integration)
+  - Other resources
+    * [Privacy model of secret contracts](#/privacy-model-of-secret-contracts)
+    * [Tutorials from Secret Network community](#/tutorials-from-secret-network-community)
+    * [CosmWasm resources](#/cosmwasm-resources)
+  
+</details>
+
 ## Setup the Local Developer Testnet
 
 The developer blockchain is configured to run inside a docker container. Install [Docker](https://docs.docker.com/install/) for your environment (Mac, Windows, Linux).
@@ -407,15 +432,16 @@ Use [this link](https://github.com/baedrik/SCRT-sealed-bid-auction) for a sealed
 Now that we have mastered secret contract development, let's see how to connect a secret contract to a front-end using secret.js and how to add wallet functionality using Keplr.
 
 ### secret.js
-Secret.js is how users interact with Secret Network. Secret.js is mostly based on CosmWasm.js. While secret.js documents are being updated, you can refer to CosmWasm.js doucments
+Secret.js is how users interact with Secret Network. Secret.js is mostly based on CosmWasm.js. While secret.js documents are being updated, you can refer to CosmWasm.js documents
 - [CosmWasm JS](cosmwasm-js.md)
 - [Frontend development](building-a-frontend.md)
+- [SecretJS Templates](https://github.com/enigmampc/SecretJS-Templates)
 
 
 ### Keplr integration
 [Keplr](https://wallet.keplr.app/#/dashboard) is the web wallet users need to interact with Secret Applications. Please use [this link](https://github.com/enigmampc/SecretJS-Templates/blob/master/ReactJS%2BKeplr.js) for a sample implementation of Keplr and Secret.js
 
-## Other sesources
+## Other resources
 
 ### Privacy model of secret contracts
 Secret Contracts are based on CosmWasm v0.10, but they have additional privacy properties that can only be found on Secret Network.Secret Contract developers must always consider the trade-off between privacy, user experience, performance and gas usage. Please use this [link](https://build.scrt.network/dev/privacy-model-of-secret-contracts.html) to learn more about the privacy model of secret contracts.
@@ -426,8 +452,6 @@ Visit [this link](https://github.com/levackt/datahub-learn/tree/feature/secret/n
 ### CosmWasm resources
 Smart Contracts in the Secret Network based based on CosmWasm. Therefore, for troubleshooting and additional context, CosmWasm documentation may be very useful. Here are some of the links we relied on in putting together this guide:
 
-- [cosmwasm repo](https://github.com/CosmWasm/cosmwasm)
-- [cosmwasm starter pack - project template](https://github.com/CosmWasm/cosmwasm-template)
-- [Setting up a local "testnet"](https://www.cosmwasm.com/docs/getting-started/using-the-sdk)
-- [cosmwasm docs](https://www.cosmwasm.com/docs/intro/overview) 
+- [cosmwasm repo](https://github.com/CosmWasm/cosmwasm))
+- [cosmwasm docs](https://docs.cosmwasm.com/) 
 
