@@ -7,21 +7,8 @@ In this guide we'll use [SecretJS / CosmJS](https://github.com/cosmos/cosmjs), t
 ```bash
 # Start secretdev from your project directory so it's mounted at /code in the container
 docker run -it --rm \
- -p 26657:26657 -p 26656:26656 -p 1317:1317 \
- --name secretdev enigmampc/secret-network-sw-dev:v1.0.2
-```
-
-## Start the rest server
-This allows API access to the Secret Network
-
-**NOTE**: In a new terminal
-```bash
-
-docker exec secretdev \
-  secretcli rest-server \
-  --node tcp://localhost:26657 \
-  --trust-node \
-  --laddr tcp://0.0.0.0:1317
+ -p 26657:26657 -p 26656:26656 -p 1337:1337 \
+ --name secretdev enigmampc/secret-network-sw-dev
 ```
 
 ```bash
@@ -35,9 +22,9 @@ yarn add secretjs
 // connect to rest server
 // For reading, CosmWasmClient will suffice, we don't need to sign any transactions
 
-const client = new CosmWasmClient("http://localhost:1317")
+const client = new CosmWasmClient("http://localhost:1337")
 
-// Tp use holodeck testnet instead
+// To use holodeck testnet instead
 // const client = new CosmWasmClient("https://bootstrap.secrettestnet.io")
 
 // mainnet

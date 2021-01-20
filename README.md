@@ -38,8 +38,8 @@ Then start SecretNetwork, labelled _secretdev_ from here on:
 
 ```bash
 docker run -it --rm \
- -p 26657:26657 -p 26656:26656 -p 1337:13337 \
- --name secretdev enigmampc/secret-network-sw-dev:v1.0.4
+ -p 26657:26657 -p 26656:26656 -p 1337:1337 \
+ --name secretdev enigmampc/secret-network-sw-dev
 ```
 
 **NOTE**: The _secretdev_ docker container can be stopped by CTRL+C
@@ -195,9 +195,9 @@ This creates a zip of two files:
 ```bash
 # First lets start it up again, this time mounting our project's code inside the container.
 docker run -it --rm \
- -p 26657:26657 -p 26656:26656 -p 1317:1317 \
+ -p 26657:26657 -p 26656:26656 -p 1337:1337 \
  -v $(pwd):/root/code \
- --name secretdev enigmampc/secret-network-sw-dev:v1.0.2
+ --name secretdev enigmampc/secret-network-sw-dev
  ```
 
 Upload the optimized contract.wasm.gz:
