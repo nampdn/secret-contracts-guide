@@ -1,6 +1,6 @@
 # Secret Contracts Guide
 
-This repository can be used to master Secret Contract development! In this document you'll find information on setting up a local Secret Network developer testnet (secretdev), learning secret contract basics and shortcuts to improve your development experience and finally build and deploy secret contracts of varying complexity with UIs to create you very own Secret Apps.
+This repository can be used to master Secret Contract development! In this document you'll find information on setting up a local Secret Network developer testnet (secretdev), learning secret contract basics and shortcuts to improve your development experience and finally build and deploy secret contracts of varying complexity with UIs to create your very own Secret Apps.
 
 To learn more about secret contracts, please visit our [documentation page](https://build.scrt.network/dev/secret-contracts.html).
 
