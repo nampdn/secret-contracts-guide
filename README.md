@@ -447,7 +447,7 @@ Secret.js is how users interact with Secret Network. Secret.js is mostly based o
 Secret Contracts are based on CosmWasm v0.10, but they have additional privacy properties that can only be found on Secret Network.Secret Contract developers must always consider the trade-off between privacy, user experience, performance and gas usage. Please use this [link](https://build.scrt.network/dev/privacy-model-of-secret-contracts.html) to learn more about the privacy model of secret contracts.
 
 ### Tutorials from Secret Network community
-Visit [this link](https://github.com/levackt/datahub-learn/tree/feature/secret/network-documentation/secret/tutorials) for all tutorials about Secret Network (WIP)
+Visit [this link](https://learn.figment.io/network-documentation/secret) for all tutorials about Secret Network
 
 ### CosmWasm resources
 Smart Contracts in the Secret Network based based on CosmWasm. Therefore, for troubleshooting and additional context, CosmWasm documentation may be very useful. Here are some of the links we relied on in putting together this guide:
